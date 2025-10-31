@@ -38,15 +38,8 @@ export default function Sidebar({ activeTab, setActiveTab, user, onLogout }: Sid
               {/* Logo */}
               <div className="p-6 border-b border-border">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                    <svg className="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                      />
-                    </svg>
+                  <div className="w-10 h-10 flex items-center justify-center">
+                    <img src="/placeholder-logo.svg" alt="MedFlow AI Logo" className="w-10 h-10" />
                   </div>
                   <div>
                     <h1 className="font-bold text-lg text-foreground">MedFlow</h1>
@@ -100,19 +93,10 @@ export default function Sidebar({ activeTab, setActiveTab, user, onLogout }: Sid
       {/* Logo */}
       <div className="p-6 border-b border-border">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-            <svg className="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-          </div>
-          <div>
-            <h1 className="font-bold text-lg text-foreground">MedFlow</h1>
-            <p className="text-xs text-gray-500">AI Analytics</p>
+          <div className="w-30 h-10 flex items-center justify-center">
+            <h1 className="font-semibold">
+              Medflow AI
+            </h1>
           </div>
         </div>
       </div>

@@ -155,7 +155,7 @@ export default function LandingPage() {
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 w-full max-w-4xl">
           {stats.map((stat, idx) => (
-            <div key={idx} className="text-center p-6 rounded-2xl bg-white/50 backdrop-blur-sm border border-gray-200 shadow-sm hover:shadow-md transition-all">
+            <div key={idx} className="text-center p-6 transition-all">
               <div className="text-4xl font-bold text-gray-900 mb-2">{stat.value}</div>
               <div className="text-sm text-gray-600">{stat.label}</div>
             </div>
@@ -179,10 +179,10 @@ export default function LandingPage() {
             {features.map((feature, idx) => (
               <div
                 key={idx}
-                className="group p-8 rounded-2xl border border-gray-200 hover:border-blue-300 hover:shadow-xl transition-all duration-300 bg-white hover:-translate-y-1"
+                className="group p-8 rounded-2xl border border-gray-200 hover:shadow-xl transition-all duration-300 bg-white hover:-translate-y-1"
               >
-                <div className="w-14 h-14 rounded-xl bg-blue-100 flex items-center justify-center mb-6 group-hover:bg-blue-600 transition-colors">
-                  <feature.icon className="w-7 h-7 text-blue-600 group-hover:text-white transition-colors" />
+                <div className="w-14 h-14 rounded-xl bg-black/10 flex items-center justify-center mb-6 group-hover:bg-black transition-colors">
+                  <feature.icon className="w-7 h-7 text-black group-hover:text-white transition-colors" />
                 </div>
                 <h3 className="text-xl font-bold text-gray-900 mb-3">{feature.title}</h3>
                 <p className="text-gray-600 leading-relaxed">{feature.description}</p>
@@ -226,7 +226,7 @@ export default function LandingPage() {
 
       {/* CTA Section */}
       <div className="relative z-10 px-6 py-24">
-        <div className="max-w-4xl mx-auto text-center p-12 rounded-3xl bg-linear-to-br from-blue-600 to-purple-600 shadow-2xl">
+        <div className="max-w-7xl mx-auto text-center p-12 rounded-3xl bg-black shadow-2xl">
           <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
             Ready to transform your workflow?
           </h2>
@@ -234,11 +234,8 @@ export default function LandingPage() {
             Join hundreds of healthcare facilities using MedFlow AI to deliver better, faster care.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="px-8 py-4 rounded-xl bg-white text-blue-600 font-semibold text-lg hover:bg-gray-50 transition-all shadow-lg hover:shadow-xl">
-              Start Free Trial
-            </button>
-            <button className="px-8 py-4 rounded-xl border-2 border-white text-white font-semibold text-lg hover:bg-white/10 transition-all">
-              Contact Sales
+            <button className="px-8 py-4 rounded-xl bg-white text-black font-semibold text-lg hover:bg-gray-50 transition-all shadow-lg hover:shadow-xl">
+              Get Started
             </button>
           </div>
         </div>
