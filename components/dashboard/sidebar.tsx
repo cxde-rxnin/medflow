@@ -93,10 +93,8 @@ export default function Sidebar({ activeTab, setActiveTab, user, onLogout }: Sid
       {/* Logo */}
       <div className="p-6 border-b border-border">
         <div className="flex items-center gap-3">
-          <div className="w-30 h-10 flex items-center justify-center">
-            <h1 className="font-semibold">
-              Medflow AI
-            </h1>
+          <div className="flex items-center justify-center">
+            <span className="text-2xl font-bold text-gray-900">MedFlow AI</span>
           </div>
         </div>
       </div>

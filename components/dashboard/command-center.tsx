@@ -6,12 +6,14 @@ import AlertsPanel from "./alerts-panel"
 import ForecastChart from "./forecast-chart"
 import RecommendationPanel from "./recommendation-panel"
 import HITLReviewModal from "./hitl-review-modal"
+import CreatePatientModal from "./create-patient-modal"
 
 export default function CommandCenter() {
   const [selectedAlert, setSelectedAlert] = useState<any>(null)
   const [showRecommendation, setShowRecommendation] = useState(false)
   const [showHITLReview, setShowHITLReview] = useState(false)
   const [selectedRecommendation, setSelectedRecommendation] = useState<any>(null)
+  const [showCreatePatient, setShowCreatePatient] = useState(false)
 
   const handleRecommendationClick = (recommendation: any) => {
     setSelectedRecommendation(recommendation)
@@ -26,11 +28,13 @@ export default function CommandCenter() {
           <h1 className="text-3xl font-bold text-foreground">Command Center</h1>
           <p className="text-gray-600 mt-1">Real-time ED optimization dashboard</p>
         </div>
-        <div className="flex items-center gap-2 px-4 py-2 bg-blue-50 border border-blue-200 rounded-lg">
-          <div className="w-2 h-2 bg-accent rounded-full animate-pulse" />
-          <span className="text-sm font-medium text-primary">Live</span>
-        </div>
+        <button className="btn-primary ml-4" onClick={() => setShowCreatePatient(true)}>
+          + Create Patient
+        </button>
       </div>
+
+      {/* Create Patient Modal */}
+      <CreatePatientModal open={showCreatePatient} onClose={() => setShowCreatePatient(false)} />
 
       {/* Metrics Grid */}
       <MetricsGrid />
@@ -64,6 +68,7 @@ export default function CommandCenter() {
             setShowHITLReview(false)
             setSelectedRecommendation(null)
           }}
+          onApprove={() => { throw new Error("Function not implemented.") }}
         />
       )}
     </div>

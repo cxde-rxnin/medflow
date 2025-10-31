@@ -91,7 +91,6 @@ export default function LandingPage() {
       {/* Navigation */}
       <nav className="relative z-50 px-6 py-4 flex items-center justify-between max-w-7xl mx-auto">
         <div className="flex items-center gap-2">
-          <Activity className="w-8 h-8 text-blue-600" />
           <span className="text-2xl font-bold text-gray-900">MedFlow AI</span>
         </div>
         
