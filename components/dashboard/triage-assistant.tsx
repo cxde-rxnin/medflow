@@ -17,6 +17,10 @@ export default function TriageAssistant() {
   const [loadingPatients, setLoadingPatients] = useState(true)
   const [triagedPatients, setTriagedPatients] = useState<any[]>([])
   const [triageStartTimes, setTriageStartTimes] = useState<{ [id: string]: number }>({})
+  // Pagination state
+  const [page, setPage] = useState(1);
+  const pageSize = 5;
+  const paginatedPatients = patients.slice((page - 1) * pageSize, page * pageSize)
 
   // Fetch patients from backend
   useEffect(() => {
@@ -25,12 +29,13 @@ export default function TriageAssistant() {
       try {
         const res = await fetch("/api/patients")
         const data = await res.json()
-        // Ensure each patient has a unique ID
+        // Ensure each patient has a unique ID and _id for DB updates
         const patientsWithIds = data.map((p: any, index: number) => ({
           ...p,
-          id: p.id || `patient-${index}-${Date.now()}`
+          id: p.id || p._id || `patient-${index}-${Date.now()}`,
+          _id: p._id // always set _id for DB updates
         }))
-        console.log('Loaded patients:', patientsWithIds.map((p: any) => ({ id: p.id, name: p.name })))
+        console.log('Loaded patients:', patientsWithIds.map((p: any) => ({ id: p.id, _id: p._id, name: p.name })))
         setPatients(patientsWithIds)
       } catch (err) {
         toast.error("Failed to load patients")
@@ -76,9 +81,20 @@ export default function TriageAssistant() {
     }
   }
 
-  const handleAcceptTriage = (patientId: string) => {
+  const handleAcceptTriage = async (patientId: string) => {
     const patient = patients.find((p) => p.id === patientId)
     if (patient) {
+      // Mark patient as triaged in DB
+      try {
+        await fetch('/api/patients', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ _id: patient._id, triaged: true })
+        })
+        toast.success('Patient marked as triaged!')
+      } catch (err: any) {
+        toast.error('Failed to update triage status')
+      }
       setTriagedPatients((prev) => [
         ...prev,
         {
@@ -148,7 +164,7 @@ export default function TriageAssistant() {
     }
   }
 
-  function handleAcceptAITriage(patientId: string) {
+  async function handleAcceptAITriage(patientId: string) {
     const suggested = aiSuggestedLevelMap[patientId]
     const aiText = aiResultMap[patientId] || ''
     // Extract confidence from AI response
@@ -157,6 +173,29 @@ export default function TriageAssistant() {
     const triageTime = triageStartTimes[patientId] ? (Date.now() - triageStartTimes[patientId]) / 1000 : undefined
     const patient = patients.find((p) => p.id === patientId)
     if (patient) {
+      // Save triage to database
+      try {
+        // Save AI triage result
+        const res = await fetch('/api/save-triage', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            context: `Patient: ${patient.name}, Age: ${patient.age}, Gender: ${patient.gender}, Complaint: ${patient.chiefComplaint}, Vitals: BP ${patient.vitals?.bp ?? "N/A"}, HR ${patient.vitals?.hr ?? "N/A"}, Temp ${patient.vitals?.temp ?? "N/A"}, O2 ${patient.vitals?.o2 ?? "N/A"}`,
+            answer: aiText
+          })
+        })
+        const data = await res.json()
+        if (!res.ok) throw new Error(data.error || 'Failed to save triage')
+        // Persist triaged: true in DB
+        await fetch('/api/patients', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ _id: patient._id, triaged: true })
+        })
+        toast.success('AI triage saved & patient marked as triaged!')
+      } catch (err: any) {
+        toast.error(err.message || 'Failed to save AI triage')
+      }
       setTriagedPatients((prev) => [
         ...prev,
         {
@@ -168,7 +207,6 @@ export default function TriageAssistant() {
       ])
     }
     setPatients((prev) => prev.filter((p) => p.id !== patientId))
-    toast.success(`Triage level updated to ${suggested}${confidence && confMatch ? ` (Confidence: ${confMatch[1]}%)` : ''}`)
     // Clear the AI result for this patient after accepting
     setAiResultMap((prev) => ({ ...prev, [patientId]: null }))
     setAiSuggestedLevelMap((prev) => ({ ...prev, [patientId]: null }))
@@ -226,7 +264,7 @@ export default function TriageAssistant() {
             <p className="text-gray-500 text-lg">All patients triaged successfully!</p>
           </div>
         ) : (
-          patients.map((patient, index) => (
+          paginatedPatients.map((patient, index) => (
             <div key={`${patient.id}-${index}`} className="card hover:shadow-md transition-shadow">
               <div className="flex items-start justify-between mb-3">
                 <div className="flex-1">
@@ -301,6 +339,26 @@ export default function TriageAssistant() {
               )}
             </div>
           ))
+        )}
+        {/* Pagination Controls */}
+        {patients.length > pageSize && (
+          <div className="flex justify-center gap-2 mt-6">
+            <button
+              className="btn-secondary px-4 py-2"
+              disabled={page === 1}
+              onClick={() => setPage(page - 1)}
+            >
+              Previous
+            </button>
+            <span className="px-4 py-2 text-gray-600">Page {page} of {Math.ceil(patients.length / pageSize)}</span>
+            <button
+              className="btn-secondary px-4 py-2"
+              disabled={page === Math.ceil(patients.length / pageSize)}
+              onClick={() => setPage(page + 1)}
+            >
+              Next
+            </button>
+          </div>
         )}
       </div>
 

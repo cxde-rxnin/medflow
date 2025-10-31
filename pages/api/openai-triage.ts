@@ -19,6 +19,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
+    console.log('[openai-triage] Request body:', req.body);
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -40,18 +41,25 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     });
 
     const data = await response.json();
+    console.log('[openai-triage] OpenAI API response:', data);
     if (!response.ok) {
+      console.error('[openai-triage] OpenAI API error:', data.error?.message);
       return res.status(500).json({ error: data.error?.message || 'OpenAI API error' });
     }
 
     const answer = data.choices?.[0]?.message?.content || '';
+    console.log('[openai-triage] Answer:', answer);
 
-    // Persist triage state to database
-    await dbConnect;
-    await Triage.create({ context, answer });
+    // Persist triage state to database ONLY if explicitly requested
+    // Remove automatic save
+    // await dbConnect;
+    // console.log('[openai-triage] Connected to DB, saving triage...');
+    // await Triage.create({ context, answer });
+    // console.log('[openai-triage] Triage saved to DB.');
 
     return res.status(200).json({ answer });
   } catch (error: any) {
+    console.error('[openai-triage] Internal error:', error);
     return res.status(500).json({ error: error.message || 'Internal server error' });
   }
 }

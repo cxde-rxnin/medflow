@@ -50,7 +50,8 @@ async function seed() {
           hr: faker.number.int({ min: 50, max: 120 }),
           temp: faker.number.float({ min: 95, max: 104, precision: 0.1 }),
           o2: faker.number.int({ min: 85, max: 100 })
-        }
+        },
+        triaged: false
       }
     })
     await db.collection('patients').deleteMany({})

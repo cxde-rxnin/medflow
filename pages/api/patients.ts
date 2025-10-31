@@ -1,31 +1,34 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import clientPromise from '@/lib/mongodb';
-import { ObjectId } from 'mongodb';
+import dbConnect from '@/lib/mongodb';
+import Patient from '@/lib/patient';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const client = await clientPromise;
-  const db = client.db();
-  const collection = db.collection('patients');
+  await dbConnect();
 
   try {
     if (req.method === 'GET') {
       // Get all patients
-      const patients = await collection.find({}).toArray();
+      const patients = await Patient.find({ triaged: false });
       res.status(200).json(patients);
     } else if (req.method === 'POST') {
       // Create new patient
-      const patient = req.body;
-      const result = await collection.insertOne(patient);
-      res.status(201).json({ _id: result.insertedId, ...patient });
+      const patient = { ...req.body, triaged: false };
+      const newPatient = new Patient(patient);
+      await newPatient.save();
+      res.status(201).json(newPatient);
     } else if (req.method === 'PUT') {
       // Update patient
       const { _id, ...update } = req.body;
-      await collection.updateOne({ _id: new ObjectId(_id) }, { $set: update });
+      if (update.triaged !== undefined) {
+        await Patient.findByIdAndUpdate(_id, { ...update, triaged: update.triaged });
+      } else {
+        await Patient.findByIdAndUpdate(_id, update);
+      }
       res.status(200).json({ _id, ...update });
     } else if (req.method === 'DELETE') {
       // Delete patient
       const { _id } = req.body;
-      await collection.deleteOne({ _id: new ObjectId(_id) });
+      await Patient.findByIdAndDelete(_id);
       res.status(204).end();
     } else {
       res.status(405).json({ error: 'Method not allowed' });

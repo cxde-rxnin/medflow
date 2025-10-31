@@ -1,7 +1,18 @@
 import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import clientPromise from '@/lib/mongodb';
+import dbConnect from '@/lib/mongodb';
+import mongoose from 'mongoose';
 import { compare } from 'bcryptjs';
+
+const StaffSchema = new mongoose.Schema({
+  email: { type: String, required: true, unique: true },
+  name: { type: String, required: true },
+  password: { type: String, required: true },
+  role: { type: String, default: 'clinician' },
+  department: { type: String },
+});
+
+const Staff = mongoose.models.Staff || mongoose.model('Staff', StaffSchema);
 
 export default NextAuth({
   providers: [
@@ -12,11 +23,10 @@ export default NextAuth({
         password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
-        const client = await clientPromise;
-        const db = client.db();
-        const user = await db.collection('staff').findOne({ email: credentials?.email });
+        await dbConnect();
+        const user = await Staff.findOne({ email: credentials?.email });
         if (user && await compare(credentials!.password, user.password)) {
-          return { id: user._id.toString(), name: user.name, email: user.email };
+          return { id: user._id.toString(), name: user.name, email: user.email, role: user.role, department: user.department };
         }
         return null;
       },
