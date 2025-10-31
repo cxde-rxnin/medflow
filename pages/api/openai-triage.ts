@@ -1,4 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
+import dbConnect from '@/lib/mongodb'
+import Triage from '@/lib/triage'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
@@ -43,6 +45,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     const answer = data.choices?.[0]?.message?.content || '';
+
+    // Persist triage state to database
+    await dbConnect;
+    await Triage.create({ context, answer });
+
     return res.status(200).json({ answer });
   } catch (error: any) {
     return res.status(500).json({ error: error.message || 'Internal server error' });

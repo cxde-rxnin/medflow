@@ -4,6 +4,7 @@ import type React from "react"
 import { useState } from "react"
 import { signIn } from "next-auth/react"
 import { toast } from "react-hot-toast"
+import { useRouter } from "next/navigation"
 
 interface EmailLoginProps {
   onBack: () => void
@@ -14,6 +15,7 @@ export default function EmailLogin({ onBack }: EmailLoginProps) {
   const [password, setPassword] = useState("")
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
+  const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -36,6 +38,7 @@ export default function EmailLogin({ onBack }: EmailLoginProps) {
       setError(message)
     } else if (result?.ok) {
       toast.success("Signed in successfully!")
+      router.push("/dashboard")
     }
   }
 

@@ -3,17 +3,9 @@
 import { useSession, signIn } from "next-auth/react"
 import LoginScreen from "@/components/auth/login-screen"
 import Dashboard from "@/components/dashboard/dashboard"
+import LandingPage from './landing-page'
 
 export default function Page() {
-  const { data: session, status } = useSession()
-
-  if (status === 'loading') {
-    return <div>Loading...</div>
-  }
-
-  if (!session) {
-    return <LoginScreen onLogin={() => signIn()} />
-  }
-
-  return <Dashboard user={session.user} onLogout={() => {}} />
+  // Always show landing page first
+  return <LandingPage />
 }

@@ -21,7 +21,7 @@ export default function ClinicianDashboard() {
             <p className="font-medium text-foreground">Dr. Sarah Mitchell</p>
             <p className="text-sm text-gray-600">Emergency Medicine</p>
           </div>
-          <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-lg">
+          <div className="w-12 h-12 bg-linear-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-lg">
             SM
           </div>
         </div>

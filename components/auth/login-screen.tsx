@@ -70,6 +70,8 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
         <div className="mt-8 pt-8 border-t border-border text-center text-sm text-gray-600">
           <p>Secure healthcare analytics platform</p>
           <p className="mt-2">HIPAA compliant • Encrypted • Audited</p>
+          <p className="text-sm text-black text-center">Email: admin@medflow.ai</p>
+          <p className="text-xs text-center"> Password: 123!@#Qwe</p>
         </div>
       </div>
     </div>

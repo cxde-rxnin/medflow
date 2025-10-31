@@ -16,7 +16,7 @@ async function seed() {
     const db = client.db()
 
     // Seed staff
-    const staff = Array.from({ length: 100 }, () => ({
+    const staff = Array.from({ length: 30 }, () => ({
       email: faker.internet.email(),
       name: faker.person.fullName(),
       password: faker.internet.password(),
@@ -25,7 +25,7 @@ async function seed() {
     }))
     await db.collection('staff').deleteMany({})
     await db.collection('staff').insertMany(staff)
-    console.log('✓ Seeded 100 staff')
+    console.log('✓ Seeded 30 staff')
 
     // Seed patients
     const complaints = [

@@ -1,0 +1,7 @@
+import LoginScreen from '@/components/auth/login-screen';
+
+export default function LoginPage() {
+  return <LoginScreen onLogin={function (userData: any): void {
+      throw new Error('Function not implemented.');
+  } } />
+}

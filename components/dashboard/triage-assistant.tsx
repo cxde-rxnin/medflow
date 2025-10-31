@@ -116,10 +116,29 @@ export default function TriageAssistant() {
         console.log('Setting AI result for patient:', patient.id)
         return { ...prev, [patient.id]: data.answer }
       })
-      // Extract suggested triage level from AI response (robust regex)
-      const match = data.answer.match(/(?:Triage Level|Triage Recommendation):?\s*Level\s*(\d+|Low|Medium|High|Urgent|Critical)/i)
-      if (match) {
-        setAiSuggestedLevelMap((prev) => ({ ...prev, [patient.id]: match[1] }))
+      
+      // Extract suggested triage level from AI response (flexible regex patterns)
+      const patterns = [
+        /(?:Triage Level|Level|Priority):?\s*(\d+|Low|Medium|High|Urgent|Critical|Emergency)/i,
+        /(?:recommend|suggest|assign)(?:ed|ing)?\s+(?:Level\s+)?(\d+|Low|Medium|High|Urgent|Critical|Emergency)/i,
+        /\b(High|Medium|Low|Urgent|Critical|Emergency)\s+(?:priority|urgency|level)/i,
+        /Level\s+(\d+)/i
+      ]
+      
+      let suggestedLevel = null
+      for (const pattern of patterns) {
+        const match = data.answer.match(pattern)
+        if (match && match[1]) {
+          suggestedLevel = match[1]
+          break
+        }
+      }
+      
+      if (suggestedLevel) {
+        console.log('Extracted triage level:', suggestedLevel)
+        setAiSuggestedLevelMap((prev) => ({ ...prev, [patient.id]: suggestedLevel }))
+      } else {
+        console.warn('Could not extract triage level from AI response:', data.answer)
       }
     } catch (err: any) {
       console.error('AI Assist error:', err)
@@ -259,7 +278,7 @@ export default function TriageAssistant() {
                     console.log('Current aiResultMap:', aiResultMap)
                     handleAIAssist(patient)
                   }}
-                  className="btn-accent py-2 px-4 text-sm"
+                  className="btn-accent bg-green-600 text-white py-2 px-4 text-sm"
                   disabled={aiLoadingMap[patient.id]}
                 >
                   {aiLoadingMap[patient.id] ? "AI Loading..." : "AI Triage"}
